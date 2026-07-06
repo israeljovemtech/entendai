@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ENTENDAI explica termos e perguntas em português simples, com modos para crianças, iniciantes, resumos e exemplos práticos.">
+  <title>ENTENDAI</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f2ea;
+      --bg-top: #fbf7ef;
+      --bg-bottom: #ece4d6;
+      --surface: #fffdf8;
+      --surface-soft: rgba(255, 253, 248, 0.82);
+      --ink: #17202a;
+      --strong: #273734;
+      --muted: #53645f;
+      --line: #ddd1bd;
+      --line-strong: #cdbfa8;
+      --primary: #0f3d3e;
+      --accent: #208176;
+      --accent-soft: rgba(32, 129, 118, 0.12);
+      --cta: #e66b2f;
+      --cta-hover: #cf5d27;
+      --danger: #b42318;
+      --radius: 8px;
+      --shadow: 0 20px 60px rgba(45, 36, 22, 0.11);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(230, 107, 47, 0.15), transparent 34rem),
+        radial-gradient(circle at right 10rem, rgba(32, 129, 118, 0.16), transparent 32rem),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 55%, var(--bg-bottom) 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(15, 61, 62, 0.042) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 61, 62, 0.042) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.82), transparent 72%);
+    }
+
+    button,
+    textarea {
+      width: 100%;
+      font: inherit;
+    }
+
+    .page {
+      position: relative;
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 30px 0 40px;
+    }
+
+    .hero {
+      display: grid;
+      min-height: min(680px, calc(100dvh - 70px));
+      place-items: center;
+      padding: 18px 0 46px;
+      text-align: center;
+    }
+
+    .hero-copy {
+      display: grid;
+      justify-items: center;
+      gap: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--primary);
+      font-size: clamp(3.25rem, 9vw, 7rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+    }
+
+    .hero-subcopy {
+      display: grid;
+      gap: 8px;
+      max-width: 680px;
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.02rem, 2vw, 1.2rem);
+      line-height: 1.5;
+    }
+
+    .hero-subcopy strong {
+      color: var(--primary);
+      font-size: clamp(1.35rem, 3vw, 2.1rem);
+      line-height: 1.12;
+    }
+
+    .hero-subcopy span {
+      display: block;
+    }
+
+    .hero-action {
+      display: inline-flex;
+      width: fit-content;
+      min-height: 46px;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      background: var(--primary);
+      color: #0b1514;
+      font-weight: 900;
+      padding: 0 18px;
+      text-decoration: none;
+      transition: transform 150ms ease, background 150ms ease, box-shadow 150ms ease;
+    }
+
+    .hero-action:hover,
+    .hero-action:focus-visible {
+      background: var(--accent);
+      box-shadow: 0 12px 28px rgba(32, 129, 118, 0.22);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .tool-panel {
+      display: grid;
+      gap: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-soft);
+      box-shadow: var(--shadow);
+      padding: clamp(18px, 3vw, 28px);
+    }
+
+    .tool-heading {
+      display: grid;
+      gap: 8px;
+      max-width: 68ch;
+    }
+
+    .tool-heading h2 {
+      margin: 0;
+      color: var(--primary);
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .tool-heading p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .field-header {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      color: var(--strong);
+      font-size: 0.95rem;
+      font-weight: 850;
+    }
+
+    .helper {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    textarea {
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      outline: none;
+      transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+    }
+
+    textarea {
+      min-height: 156px;
+      padding: 16px;
+      line-height: 1.55;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(32, 129, 118, 0.18);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .mode-card {
+      min-height: 116px;
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 248, 0.72);
+      color: var(--ink);
+      cursor: pointer;
+      padding: 12px;
+      text-align: left;
+      transition: transform 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+    }
+
+    .mode-card:hover,
+    .mode-card:focus-visible {
+      border-color: var(--accent);
+      background: var(--surface);
+      box-shadow: 0 10px 26px rgba(15, 61, 62, 0.09);
+      outline: none;
+      transform: translateY(-1px);
+    }
+
+    .mode-card.is-active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: inset 0 0 0 1px rgba(32, 129, 118, 0.16);
+    }
+
+    .mode-card strong {
+      display: block;
+      color: var(--primary);
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .mode-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    .mode-description {
+      margin: 12px 0 0;
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      background: rgba(32, 129, 118, 0.09);
+      padding: 12px 14px;
+      color: var(--strong);
+      line-height: 1.45;
+    }
+
+    .input-block {
+      display: grid;
+      gap: 12px;
+    }
+
+    #botao {
+      min-height: 54px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--cta);
+      color: #fffaf1;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(230, 107, 47, 0.22);
+      transition: transform 150ms ease, background 150ms ease, opacity 150ms ease, box-shadow 150ms ease;
+    }
+
+    #botao:hover:not(:disabled) {
+      background: var(--cta-hover);
+      box-shadow: 0 18px 34px rgba(230, 107, 47, 0.26);
+      transform: translateY(-1px);
+    }
+
+    #botao:active:not(:disabled),
+    .mode-card:active,
+    .hero-action:active {
+      transform: translateY(1px);
+    }
+
+    #botao:focus-visible {
+      outline: 3px solid rgba(230, 107, 47, 0.3);
+      outline-offset: 3px;
+    }
+
+    #botao:disabled {
+      cursor: wait;
+      opacity: 0.7;
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 28px;
+      font-weight: 850;
+    }
+
+    #carregando {
+      display: none;
+      color: var(--accent);
+    }
+
+    #carregando::after {
+      content: "";
+      display: inline-block;
+      width: 1.4em;
+      animation: loadingDots 1.1s steps(4, end) infinite;
+    }
+
+    #erro {
+      color: var(--danger);
+    }
+
+    #resposta {
+      display: none;
+      min-height: 112px;
+      border: 1px solid rgba(32, 129, 118, 0.22);
+      border-left: 5px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 46px 18px 18px;
+      color: var(--strong);
+      font-size: clamp(1.04rem, 2vw, 1.16rem);
+      line-height: 1.62;
+      white-space: pre-wrap;
+      box-shadow: 0 14px 36px rgba(15, 61, 62, 0.08);
+      position: relative;
+    }
+
+    #resposta::before {
+      content: "Explicação curta";
+      position: absolute;
+      top: 16px;
+      left: 18px;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+
+    #resposta.is-visible {
+      animation: answerIn 220ms ease both;
+    }
+
+    .site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-top: 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .site-footer strong {
+      color: var(--primary);
+    }
+
+    @keyframes answerIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes loadingDots {
+      0% {
+        content: "";
+      }
+      25% {
+        content: ".";
+      }
+      50% {
+        content: "..";
+      }
+      75%,
+      100% {
+        content: "...";
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #10201f;
+        --bg-top: #172a28;
+        --bg-bottom: #0c1716;
+        --surface: #172a28;
+        --surface-soft: rgba(20, 34, 32, 0.94);
+        --ink: #f7f1e8;
+        --strong: #e7f0ec;
+        --muted: #bccbc6;
+        --line: #34544e;
+        --line-strong: #527068;
+        --primary: #d5f0e8;
+        --accent: #62c1b3;
+        --accent-soft: rgba(98, 193, 179, 0.18);
+        --cta: #e66b2f;
+        --cta-hover: #ff7c3d;
+        --danger: #ffb4a8;
+        --shadow: 0 22px 70px rgba(0, 0, 0, 0.22);
+      }
+
+      body {
+        background:
+          radial-gradient(circle at top left, rgba(230, 107, 47, 0.12), transparent 34rem),
+          radial-gradient(circle at right 10rem, rgba(98, 193, 179, 0.16), transparent 32rem),
+          linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 55%, var(--bg-bottom) 100%);
+      }
+
+      body::before {
+        background-image:
+          linear-gradient(rgba(213, 240, 232, 0.055) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(213, 240, 232, 0.055) 1px, transparent 1px);
+      }
+
+      .mode-card {
+        background: rgba(23, 42, 40, 0.76);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        min-height: min(620px, calc(100dvh - 42px));
+      }
+
+      .mode-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+    }
+
+    @media (max-width: 640px) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .page {
+        width: min(100% - 24px, 1160px);
+        padding: 18px 0 30px;
+      }
+
+      .site-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: clamp(3rem, 18vw, 5rem);
+      }
+
+      .mode-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tool-panel {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero" aria-label="Apresentação do ENTENDAI">
+      <div class="hero-copy">
+        <h1>ENTENDAI</h1>
+        <p class="hero-subcopy">
+          <strong>Digite uma dúvida e escolha como quer entender.</strong>
+          <span>O ENTENDAI adapta a linguagem ao seu momento: criança, iniciante, técnico, resumo ou exemplo prático.</span>
+        </p>
+        <a class="hero-action" href="#explicador">Começar</a>
+      </div>
+    </section>
+
+    <section class="tool-panel" id="explicador" aria-label="Gerador de explicações">
+      <div>
+        <div class="field-header">
+          <label id="modo-label">Modo da explicação</label>
+          <p class="helper" id="modo-ajuda">Escolha uma das caixinhas para adaptar o tom da resposta.</p>
+        </div>
+
+        <input id="modo" type="hidden" value="iniciante">
+
+        <div class="mode-grid" role="group" aria-labelledby="modo-label" aria-describedby="modo-ajuda modo-descricao">
+          <button class="mode-card" type="button" data-modo="criança">
+            <strong>Criança</strong>
+            <span>Mais simples, com palavras do dia a dia.</span>
+          </button>
+          <button class="mode-card" type="button" data-modo="iniciante">
+            <strong>Iniciante</strong>
+            <span>Começa do básico e evita pressupor conhecimento.</span>
+          </button>
+          <button class="mode-card" type="button" data-modo="técnico">
+            <strong>Técnico</strong>
+            <span>Mais precisão, sem virar texto pesado.</span>
+          </button>
+          <button class="mode-card" type="button" data-modo="resumo">
+            <strong>Resumo</strong>
+            <span>Curto, direto e fácil de revisar depois.</span>
+          </button>
+          <button class="mode-card" type="button" data-modo="exemplo prático">
+            <strong>Exemplo prático</strong>
+            <span>Explica usando uma situação cotidiana.</span>
+          </button>
+        </div>
+
+        <p class="mode-description" id="modo-descricao"></p>
+      </div>
+
+      <div class="input-block">
+        <div class="field-header">
+          <label for="termo">Texto para explicar</label>
+          <p class="helper">Pode ser uma palavra, uma pergunta curta ou um trecho que ficou confuso.</p>
+        </div>
+        <textarea id="termo" placeholder="Exemplo: o que é computação em nuvem?"></textarea>
+      </div>
+
+      <button id="botao" type="button">Explicar</button>
+
+      <div class="status">
+        <div id="carregando">Preparando uma explicação clara</div>
+        <div id="erro" role="alert"></div>
+      </div>
+
+      <div id="resposta" aria-live="polite"></div>
+    </section>
+
+    <footer class="site-footer">
+      <strong>ENTENDAI</strong>
+      <span>Assistente educacional simples em pt-br, usando Cloudflare Workers AI. - allan - jovemtech 3ab</span>
+    </footer>
+  </main>
+
+  <script>
+    const termo = document.getElementById("termo");
+    const modo = document.getElementById("modo");
+    const botao = document.getElementById("botao");
+    const carregando = document.getElementById("carregando");
+    const erro = document.getElementById("erro");
+    const resposta = document.getElementById("resposta");
+    const modoDescricao = document.getElementById("modo-descricao");
+    const modeCards = Array.from(document.querySelectorAll(".mode-card"));
+
+    const descricoesPorModo = {
+      criança: "Ideal para explicar uma ideia como se fosse uma conversa simples.",
+      iniciante: "Bom para começar do zero, com contexto e sem jargão desnecessário.",
+      técnico: "Útil quando você quer mais precisão, mas ainda precisa de uma leitura clara.",
+      resumo: "Melhor quando você precisa guardar a ideia central rapidamente.",
+      "exemplo prático": "Use quando uma comparação do cotidiano ajuda mais que uma definição."
+    };
+
+    function atualizarModoVisual() {
+      modeCards.forEach((card) => {
+        const ativo = card.dataset.modo === modo.value;
+        card.classList.toggle("is-active", ativo);
+        card.setAttribute("aria-pressed", ativo ? "true" : "false");
+      });
+
+      modoDescricao.textContent = descricoesPorModo[modo.value] || descricoesPorModo.iniciante;
+    }
+
+    function limparResposta() {
+      erro.textContent = "";
+      resposta.textContent = "";
+      resposta.classList.remove("is-visible");
+      resposta.style.display = "none";
+    }
+
+    modeCards.forEach((card) => {
+      card.addEventListener("click", () => {
+        modo.value = card.dataset.modo;
+        atualizarModoVisual();
+      });
+    });
+
+    atualizarModoVisual();
+
+    botao.addEventListener("click", async () => {
+      const texto = termo.value.trim();
+
+      limparResposta();
+
+      if (!texto) {
+        erro.textContent = "Digite algo para o ENTENDAI explicar.";
+        termo.focus();
+        return;
+      }
+
+      botao.disabled = true;
+      carregando.style.display = "block";
+
+      try {
+        const retorno = await fetch("/api/explicar", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            termo: texto,
+            modo: modo.value
+          })
+        });
+
+        const dados = await retorno.json();
+
+        if (!retorno.ok) {
+          throw new Error(dados.erro || "Não consegui gerar a explicação agora.");
+        }
+
+        resposta.textContent = dados.resposta;
+        resposta.style.display = "block";
+        resposta.classList.add("is-visible");
+      } catch (error) {
+        erro.textContent = error.message || "Algo saiu do esperado. Tente novamente em instantes.";
+      } finally {
+        carregando.style.display = "none";
+        botao.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
